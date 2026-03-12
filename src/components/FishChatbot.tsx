@@ -105,9 +105,16 @@ export const FishChatbot = () => {
       setMessages(p => [...p, { role: "bot", text: reply }]);
     } catch (err: any) {
       console.error("Chatbot Error:", err);
-      const fallback = err.message === "NO_KEY"
-        ? "⚠️ AI mode needs a Gemini API key.\n\nAdd **VITE_GEMINI_API_KEY** to your `.env` file.\n\nGet a free key at: **aistudio.google.com**"
-        : `😕 Couldn't reach AI. Error: ${err.message || 'Unknown failure'}. Please check your API key and model availability in AI Studio.`;
+      let fallback = "😕 Couldn't reach AI. Check your internet connection or API key.";
+      
+      if (err.message === "NO_KEY") {
+        fallback = "⚠️ AI mode needs a Gemini API key.\n\nAdd **VITE_GEMINI_API_KEY** to your `.env` file.\n\nGet a free key at: **aistudio.google.com**";
+      } else if (err.message?.includes("429")) {
+        fallback = "⚠️ **Quota Exceeded**: Your Gemini API key has run out of free requests. Please check your usage at **aistudio.google.com** or wait a few minutes and try again.";
+      } else if (err.message?.includes("404")) {
+        fallback = "⚠️ **Model Not Found**: The selected AI model is not available for your API key. Try checking your API key settings in AI Studio.";
+      }
+      
       setMessages(p => [...p, { role: "bot", text: fallback }]);
     } finally {
       setLoading(false);
