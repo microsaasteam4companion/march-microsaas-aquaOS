@@ -134,6 +134,18 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
                </div>
             </div>
 
+            {/* Keywords / SEO Tags */}
+            <div className="pt-8 border-t border-border/40">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">Expert Keywords & Related Topics</h3>
+              <div className="flex flex-wrap gap-2">
+                {blog.keywords.map((kw, i) => (
+                  <span key={i} className="px-3 py-1.5 rounded-lg bg-secondary/50 text-muted-foreground text-[10px] font-medium border border-border/40 hover:border-primary/30 hover:text-primary transition-all cursor-default">
+                    #{kw.replace(/\s+/g, '')}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             {/* Conclusion */}
             <div className="p-10 rounded-[32px] bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-primary/20 shadow-inner">
               <h2 className="font-display text-3xl font-bold mb-6">Final Thoughts</h2>
