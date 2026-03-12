@@ -107,7 +107,7 @@ export const FishChatbot = () => {
       console.error("Chatbot Error:", err);
       const fallback = err.message === "NO_KEY"
         ? "⚠️ AI mode needs a Gemini API key.\n\nAdd **VITE_GEMINI_API_KEY** to your `.env` file.\n\nGet a free key at: **aistudio.google.com**"
-        : "😕 Couldn't reach AI right now. Please check your API key in Vercel settings and ensure you have 'Gemini 1.5 Flash' enabled in AI Studio.";
+        : `😕 Couldn't reach AI. Error: ${err.message || 'Unknown failure'}. Please check your API key and model availability in AI Studio.`;
       setMessages(p => [...p, { role: "bot", text: fallback }]);
     } finally {
       setLoading(false);
