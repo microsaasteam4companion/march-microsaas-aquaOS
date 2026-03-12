@@ -85,8 +85,8 @@ export const FishChatbot = () => {
       if (!API_KEY) throw new Error("NO_KEY");
       
       const genAI = new GoogleGenerativeAI(API_KEY);
-      // Switching to gemini-1.5-flash-latest for better compatibility
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+      // Using gemini-2.0-flash as it is likely what the user meant by 2.5
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       
       let result;
       if (currentImage) {
