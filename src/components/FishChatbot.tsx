@@ -262,7 +262,3 @@ export const FishChatbot = () => {
     </>
   );
 };
-sence>
-    </>
-  );
-};
