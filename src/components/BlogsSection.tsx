@@ -65,6 +65,9 @@ const BlogsSection = () => {
                   <motion.img
                     src={blog.image}
                     alt={blog.title}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=800";
+                    }}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
@@ -174,10 +177,13 @@ const BlogsSection = () => {
               className="group glass-card card-hover-glow overflow-hidden cursor-pointer"
             >
               <Link to={`/blog/${blog.slug}`} className="block">
-                <div className="relative h-40 overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
                   <motion.img
                     src={blog.image}
                     alt={blog.title}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=800";
+                    }}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />

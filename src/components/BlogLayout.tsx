@@ -92,12 +92,16 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
             </motion.div>
 
             {/* Featured Image */}
-            <div className="rounded-3xl overflow-hidden glass-card p-2 border-border/20 aspect-video shadow-2xl shadow-primary/5">
+            <div className="relative aspect-video rounded-[32px] overflow-hidden mb-12 group border border-border/40 shadow-2xl">
               <img 
                 src={blog.image} 
                 alt={blog.title} 
-                className="w-full h-full object-cover rounded-2xl transition-transform duration-1000 hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=1200";
+                }}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent" />
             </div>
 
             {/* Article Sections */}
