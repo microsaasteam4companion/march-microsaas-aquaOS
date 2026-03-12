@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Fish, Camera, Image as ImageIcon, Trash2 } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+// The user is switching to Grok/Groq
+const API_KEY = import.meta.env.VITE_GROK_API_KEY || "";
 
 const SYSTEM_PROMPT = `You are AquaBot, an expert aquarium and fishkeeping assistant built into the AquaOS dashboard app.
 
@@ -47,28 +47,8 @@ export const FishChatbot = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const chatRef = useRef<any>(null);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, open]);
-
-  const initChat = () => {
-    if (!chatRef.current && API_KEY) {
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      chatRef.current = model.startChat({
-        history: [{ role: "user", parts: [{ text: SYSTEM_PROMPT }] }, { role: "model", parts: [{ text: "Understood! I'm AquaBot, ready to help with all aquarium questions." }] }],
-      });
-    }
-  };
-
-  const fileToGenerativePart = async (base64Str: string) => {
-    return {
-      inlineData: {
-        data: base64Str.split(",")[1],
-        mimeType: base64Str.split(",")[0].split(":")[1].split(";")[0]
-      },
-    };
-  };
 
   const send = async (text = input) => {
     const q = text.trim();
@@ -78,41 +58,59 @@ export const FishChatbot = () => {
     setInput("");
     setSelectedImage(null);
     
-    setMessages(p => [...p, { role: "user", text: q || "Analying image..." }]);
+    setMessages(p => [...p, { role: "user", text: q || "Analyzing image..." }]);
     setLoading(true);
 
     try {
       if (!API_KEY) throw new Error("NO_KEY");
       
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      // Using gemini-2.0-flash as it is likely what the user meant by 2.5
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      // Determine endpoint based on key prefix (supporting both Grok and Groq)
+      const isGroq = API_KEY.startsWith("gsk_");
+      const endpoint = isGroq 
+        ? "https://api.groq.com/openai/v1/chat/completions" 
+        : "https://api.x.ai/v1/chat/completions";
       
-      let result;
-      if (currentImage) {
-        const imagePart = await fileToGenerativePart(currentImage);
-        result = await model.generateContent([q || "What is in this image related to fish/aquariums?", imagePart]);
-      } else {
-        if (!chatRef.current) {
-          chatRef.current = model.startChat({
-            history: [{ role: "user", parts: [{ text: SYSTEM_PROMPT }] }, { role: "model", parts: [{ text: "Understood! I'm AquaBot, ready to help with all aquarium questions." }] }],
-          });
-        }
-        result = await chatRef.current.sendMessage(q);
+      const model = isGroq ? "llama-3.3-70b-versatile" : "grok-beta";
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...messages.map(m => ({
+              role: m.role === "user" ? "user" : "assistant",
+              content: m.text
+            })),
+            { role: "user", content: q }
+          ],
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `API Error: ${response.status}`);
       }
-      
-      const reply = result.response.text();
+
+      const data = await response.json();
+      const reply = data.choices[0].message.content;
       setMessages(p => [...p, { role: "bot", text: reply }]);
+      
     } catch (err: any) {
       console.error("Chatbot Error:", err);
       let fallback = "😕 Couldn't reach AI. Check your internet connection or API key.";
       
       if (err.message === "NO_KEY") {
-        fallback = "⚠️ AI mode needs a Gemini API key.\n\nAdd **VITE_GEMINI_API_KEY** to your `.env` file.\n\nGet a free key at: **aistudio.google.com**";
+        fallback = "⚠️ AI mode needs an API key.\n\nAdd **VITE_GROK_API_KEY** to your Vercel settings.";
       } else if (err.message?.includes("429")) {
-        fallback = "⚠️ **Quota Exceeded**: Your Gemini API key has run out of free requests. Please check your usage at **aistudio.google.com** or wait a few minutes and try again.";
-      } else if (err.message?.includes("404")) {
-        fallback = "⚠️ **Model Not Found**: The selected AI model is not available for your API key. Try checking your API key settings in AI Studio.";
+        fallback = "⚠️ **Quota Exceeded**: Your API key has run out of requests. Please check your usage or try again later.";
+      } else {
+        fallback = `😕 Error: ${err.message}. Please check your API key in Vercel settings.`;
       }
       
       setMessages(p => [...p, { role: "bot", text: fallback }]);
@@ -171,7 +169,7 @@ export const FishChatbot = () => {
               </div>
               <div>
                 <p className="font-display font-bold text-sm">AquaBot 🐠</p>
-                <p className="text-[11px] text-muted-foreground">Powered by Gemini AI</p>
+                <p className="text-[11px] text-muted-foreground">Powered by {API_KEY.startsWith("gsk_") ? "Groq" : "Grok"} AI</p>
               </div>
               <div className="ml-auto flex items-center gap-1.5">
                 <span className={`w-2 h-2 rounded-full ${API_KEY ? "bg-accent animate-pulse" : "bg-yellow-400"}`} />
@@ -261,6 +259,10 @@ export const FishChatbot = () => {
           </motion.div>
         )}
       </AnimatePresence>
+    </>
+  );
+};
+sence>
     </>
   );
 };
