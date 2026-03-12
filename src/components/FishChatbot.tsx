@@ -4,10 +4,6 @@ import { MessageCircle, X, Send, Fish, Camera, Image as ImageIcon, Trash2 } from
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
-console.log("Chatbot initialized. API Key present:", !!API_KEY);
-if (API_KEY) {
-  console.log("Key prefix:", API_KEY.substring(0, 6), "Length:", API_KEY.length);
-}
 
 const SYSTEM_PROMPT = `You are AquaBot, an expert aquarium and fishkeeping assistant built into the AquaOS dashboard app.
 
@@ -89,6 +85,7 @@ export const FishChatbot = () => {
       if (!API_KEY) throw new Error("NO_KEY");
       
       const genAI = new GoogleGenerativeAI(API_KEY);
+      // Using gemini-1.5-flash-latest which is often more reliable
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
       let result;
@@ -96,7 +93,11 @@ export const FishChatbot = () => {
         const imagePart = await fileToGenerativePart(currentImage);
         result = await model.generateContent([q || "What is in this image related to fish/aquariums?", imagePart]);
       } else {
-        initChat();
+        if (!chatRef.current) {
+          chatRef.current = model.startChat({
+            history: [{ role: "user", parts: [{ text: SYSTEM_PROMPT }] }, { role: "model", parts: [{ text: "Understood! I'm AquaBot, ready to help with all aquarium questions." }] }],
+          });
+        }
         result = await chatRef.current.sendMessage(q);
       }
       
@@ -106,7 +107,7 @@ export const FishChatbot = () => {
       console.error("Chatbot Error:", err);
       const fallback = err.message === "NO_KEY"
         ? "⚠️ AI mode needs a Gemini API key.\n\nAdd **VITE_GEMINI_API_KEY** to your `.env` file.\n\nGet a free key at: **aistudio.google.com**"
-        : `😕 Couldn't reach AI right now. Error: ${err.message || 'Unknown error'}. Check your internet connection or API key.`;
+        : "😕 Couldn't reach AI right now. Please check your API key in Vercel settings and ensure you have 'Gemini 1.5 Flash' enabled in AI Studio.";
       setMessages(p => [...p, { role: "bot", text: fallback }]);
     } finally {
       setLoading(false);
