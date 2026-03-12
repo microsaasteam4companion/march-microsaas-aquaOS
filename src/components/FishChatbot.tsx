@@ -4,6 +4,10 @@ import { MessageCircle, X, Send, Fish, Camera, Image as ImageIcon, Trash2 } from
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+console.log("Chatbot initialized. API Key present:", !!API_KEY);
+if (API_KEY) {
+  console.log("Key prefix:", API_KEY.substring(0, 6), "Length:", API_KEY.length);
+}
 
 const SYSTEM_PROMPT = `You are AquaBot, an expert aquarium and fishkeeping assistant built into the AquaOS dashboard app.
 
@@ -99,9 +103,10 @@ export const FishChatbot = () => {
       const reply = result.response.text();
       setMessages(p => [...p, { role: "bot", text: reply }]);
     } catch (err: any) {
+      console.error("Chatbot Error:", err);
       const fallback = err.message === "NO_KEY"
         ? "⚠️ AI mode needs a Gemini API key.\n\nAdd **VITE_GEMINI_API_KEY** to your `.env` file.\n\nGet a free key at: **aistudio.google.com**"
-        : "😕 Couldn't reach AI right now. Check your internet connection or API key.";
+        : `😕 Couldn't reach AI right now. Error: ${err.message || 'Unknown error'}. Check your internet connection or API key.`;
       setMessages(p => [...p, { role: "bot", text: fallback }]);
     } finally {
       setLoading(false);
