@@ -14,7 +14,6 @@ const free = [
 
 const premium = [
   "Everything in Free",
-  "AI Vision: Fish Disease Identification",
   "Premium Generative AI Advisor",
   "Advanced Parameter Analytics",
   "Unlimited Tank Management",

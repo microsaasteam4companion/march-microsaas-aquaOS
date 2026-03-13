@@ -466,7 +466,7 @@ const Dashboard = () => {
               <button onClick={()=>deleteTank(tank.id)} className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-all"><Trash2 size={12}/></button>
             </div>
           ))}
-          <button onClick={()=>setShowAddTank(true)} className="glass-card px-3 py-2.5 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:border-primary/30 transition-all shrink-0"><Plus size={14}/>Add Tank</button>
+          <button onClick={()=>{ if(tanks.length >= 3){ toast.error("Free plan allows up to 3 tanks. Upgrade to Premium for unlimited tanks! 🐠",{duration:5000}); return; } setShowAddTank(true); }} className="glass-card px-3 py-2.5 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:border-primary/30 transition-all shrink-0"><Plus size={14}/>Add Tank {tanks.length >= 3 && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-400/15 text-yellow-400 font-bold">MAX</span>}</button>
         </div>
 
         {/* Tabs */}
