@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Clock, User, Search, ArrowRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Clock, Search, ArrowRight } from "lucide-react";
 import { allBlogs, blogCategories } from "@/data/blogs";
 import { Link } from "react-router-dom";
 
@@ -22,7 +22,7 @@ const BlogsSection = () => {
   const featured = allBlogs.slice(0, 3);
 
   return (
-    <section id="blog" className="relative py-32 overflow-hidden">
+    <section id="blog" className="relative py-20 sm:py-32 overflow-hidden">
       <div className="absolute inset-0 water-caustics opacity-20 pointer-events-none" />
       <div className="orb orb-primary w-[500px] h-[400px] top-[5%] left-[-10%] animate-float-slow" />
       <div className="orb orb-accent w-[400px] h-[300px] bottom-[15%] right-[-8%] animate-float-delayed" />
@@ -48,7 +48,7 @@ const BlogsSection = () => {
         </motion.div>
 
         {/* Featured blogs */}
-        <div className="grid lg:grid-cols-3 gap-5 mb-16 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-16 max-w-6xl mx-auto">
           {featured.map((blog, i) => (
             <motion.article
               key={blog.id}
@@ -79,7 +79,6 @@ const BlogsSection = () => {
                       {blog.title}
                     </h3>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1"><User size={10} />{blog.author}</span>
                       <span className="flex items-center gap-1"><Clock size={10} />{blog.readTime} min</span>
                     </div>
                   </div>
@@ -89,50 +88,7 @@ const BlogsSection = () => {
           ))}
         </div>
 
-        {/* Table of Contents toggle */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="max-w-6xl mx-auto mb-8"
-        >
-          <button
-            onClick={() => setShowTableOfContents(!showTableOfContents)}
-            className="group flex items-center gap-3 glass-card px-6 py-4 w-full text-left hover:border-primary/30 transition-all"
-          >
-            <ChevronRight size={16} className={`text-primary transition-transform ${showTableOfContents ? "rotate-90" : ""}`} />
-            <span className="font-display font-semibold">Table of Contents</span>
-            <span className="text-xs text-muted-foreground ml-auto">{allBlogs.length} articles</span>
-          </button>
-          {showTableOfContents && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="glass-card mt-1 p-6 max-h-80 overflow-y-auto"
-            >
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1.5">
-                {blogCategories.map((cat) => (
-                  <div key={cat}>
-                    <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest mt-3 mb-2">{cat}</h4>
-                    {allBlogs
-                      .filter((b) => b.category === cat)
-                      .slice(0, 5)
-                      .map((b) => (
-                        <Link 
-                          key={b.id} 
-                          to={`/blog/${b.slug}`}
-                          className="block text-[10px] text-muted-foreground py-0.5 hover:text-primary cursor-pointer transition-colors truncate"
-                        >
-                          {b.title}
-                        </Link>
-                      ))}
-                    <p className="text-[9px] text-primary/60 mt-1 italic">+ {allBlogs.filter((b) => b.category === cat).length - 5} more articles</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </motion.div>
+
 
         {/* Search & Filter bar */}
         <div className="max-w-6xl mx-auto mb-8">
@@ -147,12 +103,12 @@ const BlogsSection = () => {
                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-secondary/40 border border-border/40 text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary/40 transition-colors backdrop-blur-sm"
               />
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            <div className="flex gap-2 flex-wrap pb-1">
               {["All", ...blogCategories.slice(0, 5)].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => { setActiveCategory(cat); setVisibleCount(BLOGS_PER_PAGE); }}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                  className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                     activeCategory === cat
                       ? "bg-primary text-primary-foreground shadow-[var(--shadow-glow-sm)]"
                       : "bg-secondary/40 text-muted-foreground hover:text-foreground hover:bg-secondary/60 border border-border/30"
@@ -165,8 +121,7 @@ const BlogsSection = () => {
           </div>
         </div>
 
-        {/* Blog grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto mb-8">
           {visible.map((blog, i) => (
             <motion.article
               key={blog.id}
@@ -198,7 +153,6 @@ const BlogsSection = () => {
                   <p className="text-xs text-muted-foreground line-clamp-2 mb-4 leading-relaxed">{blog.excerpt}</p>
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                     <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1"><User size={9} />{blog.author}</span>
                       <span className="flex items-center gap-1"><Clock size={9} />{blog.readTime}m</span>
                     </div>
                     <span>{blog.date}</span>

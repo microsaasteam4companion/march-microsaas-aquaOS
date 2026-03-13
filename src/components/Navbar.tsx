@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sun, Moon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/aquaos-logo-new.png";
 
 const navLinks = [
-  { label: "Pricing", href: "#pricing" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "Blog", href: "/blog" },
 ];
 
@@ -13,6 +13,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const saved = localStorage.getItem("aquaos-theme");
@@ -63,7 +64,17 @@ const Navbar = () => {
             <motion.a
               key={l.label}
               href={l.href}
-              onClick={(e) => { if (l.href.startsWith("/")) { e.preventDefault(); navigate(l.href); } }}
+              onClick={(e) => { 
+                if (l.href.startsWith("/#")) {
+                  if (location.pathname === "/") {
+                    e.preventDefault();
+                    document.getElementById(l.href.replace("/#", ""))?.scrollIntoView({ behavior: "smooth" });
+                  }
+                } else if (l.href.startsWith("/")) { 
+                  e.preventDefault(); 
+                  navigate(l.href); 
+                } 
+              }}
               whileHover={{ y: -1 }}
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary/50"
             >
@@ -120,7 +131,18 @@ const Navbar = () => {
                 <motion.a
                   key={l.label}
                   href={l.href}
-                  onClick={(e) => { if (l.href.startsWith("/")) { e.preventDefault(); navigate(l.href); } setMobileOpen(false); }}
+                  onClick={(e) => { 
+                    if (l.href.startsWith("/#")) {
+                      if (location.pathname === "/") {
+                        e.preventDefault();
+                        document.getElementById(l.href.replace("/#", ""))?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    } else if (l.href.startsWith("/")) { 
+                      e.preventDefault(); 
+                      navigate(l.href); 
+                    } 
+                    setMobileOpen(false); 
+                  }}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: i * 0.1 }}

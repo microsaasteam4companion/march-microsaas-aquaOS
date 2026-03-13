@@ -10,8 +10,6 @@ import BlogPost from "./pages/BlogPost";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/Signup";
 import Legal from "./pages/Legal";
-import UpvoteWidget from "./components/UpvoteWidget";
-import { FishChatbot } from "./components/FishChatbot";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,8 +45,6 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <UpvoteWidget />
-        <FishChatbot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

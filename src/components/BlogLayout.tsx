@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ChevronRight, Clock, User, Share2, Facebook, Twitter, Link as LinkIcon, MessageSquare } from "lucide-react";
+import { ChevronRight, Clock, Share2, Facebook, Twitter, Link as LinkIcon, MessageSquare } from "lucide-react";
 import { BlogPost, allBlogs } from "@/data/blogs";
 import { Link } from "react-router-dom";
 
@@ -12,17 +12,56 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
     .filter((b) => b.category === blog.category && b.id !== blog.id)
     .slice(0, 4);
 
+  // Generate AEO/GEO Schema
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": blog.title,
+        "description": blog.excerpt,
+        "image": blog.image,
+        "datePublished": blog.date ? new Date(blog.date).toISOString() : new Date().toISOString(),
+        "author": {
+          "@type": "Person",
+          "name": blog.author || "AquaOS Editorial Team"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Entrext Labs",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://aquaos.entrext.com/favicon.png" // Updated to use the correct favicon
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": blog.faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.answer
+          }
+        }))
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background pt-24 pb-20">
       <div className="absolute inset-0 water-caustics opacity-10 pointer-events-none" />
       
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }} />
+
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
-          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-          <ChevronRight size={12} />
-          <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
-          <ChevronRight size={12} />
+          <Link to="/" className="shrink-0 hover:text-primary transition-colors">Home</Link>
+          <ChevronRight size={12} className="shrink-0" />
+          <Link to="/blog" className="shrink-0 hover:text-primary transition-colors">Blog</Link>
+          <ChevronRight size={12} className="shrink-0" />
           <span className="text-foreground font-medium truncate">{blog.title}</span>
         </nav>
 
@@ -38,12 +77,8 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
           </h1>
           <div className="flex flex-wrap items-center justify-between gap-6 pb-8 border-b border-border/40">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold shadow-lg shadow-primary/20">
-                {blog.author.charAt(0)}
-              </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">{blog.author}</span>
-                <span className="text-xs text-muted-foreground">{blog.date}</span>
+                <span className="text-sm font-semibold text-foreground">{blog.date}</span>
               </div>
             </div>
             <div className="flex items-center gap-6 text-muted-foreground">
@@ -63,14 +98,14 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
           </div>
         </header>
 
-        <div className="grid lg:grid-cols-[1fr_300px] gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8 lg:gap-12">
           {/* Main Content */}
           <article className="space-y-12">
             {/* Summary / TL;DR */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-card p-8 bg-primary/5 border-primary/20 relative overflow-hidden group"
+              className="glass-card p-6 sm:p-8 bg-primary/5 border-primary/20 relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 group-hover:scale-150 transition-transform duration-700" />
               <div className="relative z-10">
@@ -119,7 +154,7 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
             </div>
 
             {/* FAQ Section */}
-            <div className="glass-card p-10 border-border/30 bg-secondary/5 relative overflow-hidden">
+            <div className="glass-card p-6 sm:p-10 border-border/30 bg-secondary/5 relative overflow-hidden">
                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-accent" />
                <h2 className="font-display text-3xl font-bold mb-10 flex items-center gap-4">
                  <span className="text-gradient-primary">Frequently Asked</span> Questions
@@ -151,7 +186,7 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
             </div>
 
             {/* Conclusion */}
-            <div className="p-10 rounded-[32px] bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-primary/20 shadow-inner">
+            <div className="p-6 sm:p-10 rounded-[24px] sm:rounded-[32px] bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-primary/20 shadow-inner">
               <h2 className="font-display text-3xl font-bold mb-6">Final Thoughts</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Consistency and monitoring are your greatest allies in the aquarium hobby. By following the steps outlined in this guide, you're setting yourself—and your livestock—up for long-term health and success.
@@ -207,7 +242,7 @@ const BlogLayout = ({ blog }: BlogLayoutProps) => {
                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
              </Link>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedBlogs.map((b) => (
               <Link to={`/blog/${b.slug}`} key={b.id} className="group block">
                 <div className="glass-card card-hover-glow h-full flex flex-col overflow-hidden">

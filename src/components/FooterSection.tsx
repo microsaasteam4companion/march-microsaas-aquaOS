@@ -8,21 +8,16 @@ import BubbleEffect from "./BubbleEffect";
 const footerLinks = {
   Product: [
     { label: "Blog", href: "/blog" },
-    { label: "Beginner Guides", href: "#" },
-    { label: "Help Center", href: "#" },
+    { label: "Petvault", href: "https://petvault.entrext.com/" },
+    { label: "Pawnote", href: "https://pawnote.entrext.com" },
   ],
   Resources: [
     { label: "Community Forum (Substack)", href: "https://entrextlabs.substack.com/subscribe" },
-  ],
-  Company: [
-    { label: "About Us", href: "#" },
-    { label: "Contact", href: "#" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Cookie Policy", href: "/cookies" },
-    { label: "Accessibility", href: "/accessibility" },
   ],
 };
 
@@ -36,7 +31,7 @@ const socials = [
 const FooterSection = () => {
   return (
     <footer className="relative border-t border-border/20 overflow-hidden">
-      {/* CTA Banner — Underwater Aquarium Theme */}
+      {/* CTA Banner - Underwater Aquarium Theme */}
       <div className="container mx-auto px-4 py-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -165,7 +160,7 @@ const FooterSection = () => {
               <span className="font-display text-xl font-bold text-gradient-primary">AquaOS</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-              The world's most intelligent aquarium management platform. AI-powered water chemistry, species compatibility, disease diagnosis, and tank planning — all in one beautiful app.
+              The world's most intelligent aquarium management platform. AI-powered water chemistry, species compatibility, disease diagnosis, and tank planning - all in one beautiful app.
             </p>
             <div className="space-y-3 text-sm text-muted-foreground mb-6">
               <div className="flex items-center gap-2.5">

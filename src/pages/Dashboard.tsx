@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Droplets, Fish, FlaskConical, BarChart3, Plus, TrendingUp, AlertTriangle, 
   LogOut, Trash2, Edit3, X, Thermometer, Waves, Search, Utensils, ChevronDown, 
-  Bell, Calendar, CheckSquare, Square, Clock, Check 
+  Bell, Calendar, CheckSquare, Square, Clock, Check, Sun, Moon
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -67,7 +67,10 @@ const AddTankModal = ({userId,onClose}:{userId:string;onClose:()=>void}) => {
       <div className="grid grid-cols-2 gap-3"><Inp label="Tank Name" name="name" form={form} setForm={setForm}/><Inp label="Size" name="size" form={form} setForm={setForm}/></div>
       <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Water Type</label>
         <select value={form.type} onChange={e=>setForm((p:any)=>({...p,type:e.target.value}))} className="w-full px-3 py-2 rounded-xl bg-secondary/40 border border-border/40 text-sm text-foreground focus:outline-none focus:border-primary/60 transition-all">
-          <option>Freshwater</option><option>Saltwater</option><option>Brackish</option></select></div>
+          <option className="bg-background text-foreground">Freshwater</option>
+          <option className="bg-background text-foreground">Saltwater</option>
+          <option className="bg-background text-foreground">Brackish</option>
+        </select></div>
       <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider pt-1">Initial Parameters</p>
       <div className="grid grid-cols-3 gap-3">
         <Inp label="pH" name="ph" form={form} setForm={setForm} type="number" step="0.1"/>
@@ -135,7 +138,11 @@ const AddLivestockModal = ({tankId,onClose}:{tankId:string;onClose:()=>void}) =>
           <input type="number" min={1} value={form.count} onChange={e=>setForm(p=>({...p,count:Number(e.target.value)}))} className="w-full px-3 py-2 rounded-xl bg-secondary/40 border border-border/40 text-sm text-foreground focus:outline-none focus:border-primary/60 transition-all"/></div>
         <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Type</label>
           <select value={form.type} onChange={e=>setForm(p=>({...p,type:e.target.value}))} className="w-full px-3 py-2 rounded-xl bg-secondary/40 border border-border/40 text-sm text-foreground focus:outline-none focus:border-primary/60 transition-all">
-            <option>Fish</option><option>Coral</option><option>Invertebrate</option><option>Plant</option></select></div>
+            <option className="bg-background text-foreground">Fish</option>
+            <option className="bg-background text-foreground">Coral</option>
+            <option className="bg-background text-foreground">Invertebrate</option>
+            <option className="bg-background text-foreground">Plant</option>
+          </select></div>
       </div>
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-xl bg-secondary/50 border border-border/40 text-sm font-semibold text-muted-foreground hover:text-foreground transition-all">Cancel</button>
@@ -193,7 +200,32 @@ const Dashboard = () => {
   const [compatA,setCompatA]=useState("");
   const [compatB,setCompatB]=useState("");
   const [showAlerts,setShowAlerts]=useState(false);
+  const [isDark,setIsDark]=useState(true);
   const prevTankIdRef=useRef<string|null>(null);
+
+  // Theme Sync
+  useEffect(() => {
+    const saved = localStorage.getItem("aquaos-theme");
+    if (saved === "light") {
+      setIsDark(false);
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("aquaos-theme", "dark");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("aquaos-theme", "light");
+    }
+  };
 
   // Auth
   useEffect(()=>{
@@ -263,17 +295,17 @@ const Dashboard = () => {
   };
   const alerts = selectedTank ? (()=>{
     const a:any[]=[];const t=selectedTank;
-    if(t.ammonia>0.25) a.push({s:"danger",msg:`🚨 Ammonia critical (${t.ammonia} ppm) — emergency water change NOW`});
-    else if(t.ammonia>0.1) a.push({s:"warning",msg:`⚠️ Ammonia elevated (${t.ammonia} ppm) — monitor closely`});
-    if(t.nitrite>0.5) a.push({s:"danger",msg:`🚨 Nitrite toxic (${t.nitrite} ppm) — immediate action!`});
-    else if(t.nitrite>0) a.push({s:"warning",msg:`⚠️ Nitrite detectable (${t.nitrite} ppm) — tank may be cycling`});
-    if(t.nitrate>40) a.push({s:"danger",msg:`🚨 Nitrate too high (${t.nitrate} ppm) — do water change`});
-    else if(t.nitrate>25) a.push({s:"warning",msg:`⚠️ Nitrate rising (${t.nitrate} ppm) — schedule water change`});
-    if(t.ph<6.8) a.push({s:"danger",msg:`🚨 pH too low (${t.ph}) — buffer immediately`});
-    else if(t.ph>8.5) a.push({s:"danger",msg:`🚨 pH too high (${t.ph}) — check alkalinity`});
-    if(t.temp<72) a.push({s:"warning",msg:`⚠️ Too cold (${t.temp}°F) — check heater`});
-    else if(t.temp>82) a.push({s:"danger",msg:`🚨 Too hot (${t.temp}°F) — add cooling urgently`});
-    if(a.length===0) a.push({s:"ok",msg:"✅ All parameters in safe range — tank looks great!"});
+    if(t.ammonia>0.25) a.push({s:"danger",msg:`🚨 Ammonia critical (${t.ammonia} ppm) - emergency water change NOW`});
+    else if(t.ammonia>0.1) a.push({s:"warning",msg:`⚠️ Ammonia elevated (${t.ammonia} ppm) - monitor closely`});
+    if(t.nitrite>0.5) a.push({s:"danger",msg:`🚨 Nitrite toxic (${t.nitrite} ppm) - immediate action!`});
+    else if(t.nitrite>0) a.push({s:"warning",msg:`⚠️ Nitrite detectable (${t.nitrite} ppm) - tank may be cycling`});
+    if(t.nitrate>40) a.push({s:"danger",msg:`🚨 Nitrate too high (${t.nitrate} ppm) - do water change`});
+    else if(t.nitrate>25) a.push({s:"warning",msg:`⚠️ Nitrate rising (${t.nitrate} ppm) - schedule water change`});
+    if(t.ph<6.8) a.push({s:"danger",msg:`🚨 pH too low (${t.ph}) - buffer immediately`});
+    else if(t.ph>8.5) a.push({s:"danger",msg:`🚨 pH too high (${t.ph}) - check alkalinity`});
+    if(t.temp<72) a.push({s:"warning",msg:`⚠️ Too cold (${t.temp}°F) - check heater`});
+    else if(t.temp>82) a.push({s:"danger",msg:`🚨 Too hot (${t.temp}°F) - add cooling urgently`});
+    if(a.length===0) a.push({s:"ok",msg:"✅ All parameters in safe range - tank looks great!"});
     return a;
   })():[];
 
@@ -292,22 +324,52 @@ const Dashboard = () => {
     }
   },[alerts.length, selectedTank?.id]);
 
-  // Compatibiltiy check
   const compatResult = (()=>{
     if(!compatA||!compatB) return null;
     const sA=SPECIES_DB.find(s=>s.name===compatA);
     const sB=SPECIES_DB.find(s=>s.name===compatB);
     if(!sA||!sB) return null;
     const issues:string[]=[];
-    if(sA.incompat.some(n=>n===compatB)||sB.incompat.some(n=>n===compatA)) issues.push(`⚠️ ${compatA} and ${compatB} are listed as incompatible.`);
-    if(sA.type!==sB.type) issues.push(`❌ Water type mismatch: ${compatA} is ${sA.type}, ${compatB} is ${sB.type}.`);
-    const phOvMin=Math.max(sA.ph[0],sB.ph[0]);const phOvMax=Math.min(sA.ph[1],sB.ph[1]);
-    if(phOvMin>phOvMax) issues.push(`❌ No pH overlap: ${compatA} needs ${sA.ph[0]}-${sA.ph[1]}, ${compatB} needs ${sB.ph[0]}-${sB.ph[1]}.`);
-    else issues.push(`✅ pH overlap: ${phOvMin.toFixed(1)} – ${phOvMax.toFixed(1)}`);
-    const tOvMin=Math.max(sA.temp[0],sB.temp[0]);const tOvMax=Math.min(sA.temp[1],sB.temp[1]);
-    if(tOvMin>tOvMax) issues.push(`❌ No temperature overlap.`);
-    else issues.push(`✅ Temp overlap: ${tOvMin}°F – ${tOvMax}°F`);
-    return {ok:issues.filter(i=>i.startsWith("✅")).length,issues};
+
+    // Overview of species
+    issues.push(`ℹ️ **Overview:** ${sA.name} is a ${sA.size} (${sA.care} level) species that prefers the ${sA.swimming} level of the tank. ${sB.name} is a ${sB.size} (${sB.care} level) species that mostly occupies the ${sB.swimming} level.`);
+
+    // Aggression / Known Incompatibility
+    if(sA.incompat.some((n:string)=>n===compatB)||sB.incompat.some((n:string)=>n===compatA)) {
+      issues.push(`⚠️ **Not Compatible!** ${compatA} and ${compatB} have known behavioral or predatory issues. Keeping them together will cause extreme stress, injury, or death.`);
+    }
+
+    // Water Type
+    if(sA.type!==sB.type) {
+      issues.push(`❌ **Water Mismatch!** ${compatA} requires a ${sA.type} environment, while ${compatB} requires a ${sB.type} environment. They absolutely cannot survive in the same tank.`);
+    }
+
+    // pH
+    const phOvMin=Math.max(sA.ph[0],sB.ph[0]);
+    const phOvMax=Math.min(sA.ph[1],sB.ph[1]);
+    if(phOvMin>phOvMax) {
+      issues.push(`❌ **pH Mismatch!** ${compatA} needs a pH of ${sA.ph[0]}-${sA.ph[1]}, but ${compatB} needs a pH of ${sB.ph[0]}-${sB.ph[1]}. These ranges do not overlap, so one species will constantly suffer from incorrect water chemistry.`);
+    } else {
+      issues.push(`✅ **Good pH Match:** Both species can comfortably share a pH range of ${phOvMin.toFixed(1)} to ${phOvMax.toFixed(1)}.`);
+    }
+
+    // Temperature
+    const tOvMin=Math.max(sA.temp[0],sB.temp[0]);
+    const tOvMax=Math.min(sA.temp[1],sB.temp[1]);
+    if(tOvMin>tOvMax) {
+      issues.push(`❌ **Temperature Mismatch!** ${compatA} prefers ${sA.temp[0]}-${sA.temp[1]}°F, while ${compatB} prefers ${sB.temp[0]}-${sB.temp[1]}°F. To keep one happy, the other would have to freeze or overheat.`);
+    } else {
+      issues.push(`✅ **Good Temp Match:** Both thrive in water temperatures between ${tOvMin}°F and ${tOvMax}°F.`);
+    }
+    
+    // Final Conclusion
+    if(!issues.some(i => i.startsWith("❌") || i.startsWith("⚠️"))) {
+      issues.unshift(`🌟 **Great Choice!** ${compatA} and ${compatB} should live happily and peacefully together in the same aquarium.`);
+    } else {
+      issues.unshift(`🚨 **Warning!** These species are generally not recommended to be kept together.`);
+    }
+
+    return {ok:issues.filter(i=>i.startsWith("✅")||i.startsWith("🌟")||i.startsWith("ℹ️")).length,issues};
   })();
 
   if(authLoading) return (
@@ -371,6 +433,12 @@ const Dashboard = () => {
                 )}
               </AnimatePresence>
             </div>
+            <button
+              onClick={toggleTheme}
+              className="w-9 h-9 rounded-xl bg-secondary/50 border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+            >
+              {isDark ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
             <button onClick={()=>signOut(auth).then(()=>navigate("/"))} className="w-9 h-9 rounded-xl bg-secondary/50 border border-border/30 flex items-center justify-center text-muted-foreground hover:text-red-400 transition-all"><LogOut size={15}/></button>
             <button onClick={()=>setShowProfile(true)} className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center text-primary font-bold text-sm hover:bg-primary/30 transition-all">{user?.displayName?.[0]?.toUpperCase()||user?.email?.[0]?.toUpperCase()||"A"}</button>
           </div>
@@ -387,7 +455,7 @@ const Dashboard = () => {
         {/* Tank Selector */}
         <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1">
           {tanksLoading&&<div className="text-xs text-muted-foreground">Loading tanks…</div>}
-          {!tanksLoading&&tanks.length===0&&<div className="glass-card px-4 py-2.5 text-sm text-muted-foreground italic">No tanks yet — add your first!</div>}
+          {!tanksLoading&&tanks.length===0&&<div className="glass-card px-4 py-2.5 text-sm text-muted-foreground italic">No tanks yet - add your first!</div>}
           {tanks.map(tank=>(
             <div key={tank.id} className="flex items-center gap-1 shrink-0">
               <button onClick={()=>handleSelectTank(tank)}
@@ -395,7 +463,7 @@ const Dashboard = () => {
                 <Fish size={14} className={ct?.id===tank.id?"text-primary":"text-muted-foreground"}/>
                 <div className="text-left"><p className="font-semibold text-sm truncate max-w-[100px]">{tank.name}</p><p className="text-[11px] text-muted-foreground">{tank.size}·{tank.type}</p></div>
               </button>
-              <button onClick={()=>deleteTank(tank.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-all"><Trash2 size={12}/></button>
+              <button onClick={()=>deleteTank(tank.id)} className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-all"><Trash2 size={12}/></button>
             </div>
           ))}
           <button onClick={()=>setShowAddTank(true)} className="glass-card px-3 py-2.5 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:border-primary/30 transition-all shrink-0"><Plus size={14}/>Add Tank</button>
@@ -452,7 +520,7 @@ const Dashboard = () => {
               {ct&&<button onClick={()=>setShowEdit(true)} className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-[var(--shadow-glow-sm)]"><Plus size={13} className="inline mr-1"/>Log Reading</button>}
             </div>
             {!ct?<div className="text-center py-20 text-muted-foreground">Select a tank first</div>:
-            history.length===0?<div className="glass-card p-10 text-center text-muted-foreground text-sm">No readings yet — click "Update & Log" on Overview tab to start tracking.</div>:(
+            history.length===0?<div className="glass-card p-10 text-center text-muted-foreground text-sm">No readings yet - click "Update & Log" on Overview tab to start tracking.</div>:(
               <div className="space-y-4">
                 {(["ph","ammonia","nitrite","nitrate","temp"] as const).map(key=>{
                   const data=history.map((h:any,i:number)=>({i:i+1,v:h[key]??0,label:`#${i+1}`}));
@@ -488,7 +556,7 @@ const Dashboard = () => {
         {tab==="Livestock"&&(
           <motion.div initial={{opacity:0}} animate={{opacity:1}} className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-display font-bold">Livestock — {ct?.name||"Select a tank"}</h2>
+              <h2 className="font-display font-bold">Livestock - {ct?.name||"Select a tank"}</h2>
               {ct&&<button onClick={()=>setShowAddLS(true)} className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-[var(--shadow-glow-sm)]"><Plus size={13} className="inline mr-1"/>Add</button>}
             </div>
             {!ct?<div className="text-center py-20 text-muted-foreground">Select a tank first</div>:
@@ -520,7 +588,7 @@ const Dashboard = () => {
               {ct&&<button onClick={()=>setShowAddTask(true)} className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-[var(--shadow-glow-sm)]"><Plus size={13} className="inline mr-1"/>New Task</button>}
             </div>
             {!ct?<div className="text-center py-20 text-muted-foreground">Select a tank first</div>:
-            tasks.length===0?<div className="glass-card p-10 text-center text-muted-foreground text-sm">No tasks yet — set your first reminder for water changes or feeding.</div>:(
+            tasks.length===0?<div className="glass-card p-10 text-center text-muted-foreground text-sm">No tasks yet - set your first reminder for water changes or feeding.</div>:(
               <div className="grid gap-2">
                 {tasks.sort((a,b)=>Number(a.completed)-Number(b.completed)).map(t=>(
                   <div key={t.id} className={`glass-card p-4 flex items-center justify-between group transition-all ${t.completed?"opacity-60 grayscale":""}`}>
@@ -564,8 +632,8 @@ const Dashboard = () => {
                     <ChevronDown size={13} className="text-muted-foreground group-open:rotate-180 transition-transform"/>
                   </summary>
                   <div className="mt-3 space-y-1.5 text-xs text-muted-foreground border-t border-border/30 pt-3">
-                    <p>🌡️ Temp: {s.temp[0]}–{s.temp[1]}°F</p>
-                    <p>⚗️ pH: {s.ph[0]}–{s.ph[1]}</p>
+                    <p>🌡️ Temp: {s.temp[0]}-{s.temp[1]}°F</p>
+                    <p>⚗️ pH: {s.ph[0]}-{s.ph[1]}</p>
                     <p>📏 Adult size: {s.size}</p>
                     <p>🍽 Diet: {s.diet}</p>
                     {s.compat.length>0&&<p className="text-accent">✅ Good with: {s.compat.join(", ")}</p>}
@@ -587,8 +655,8 @@ const Dashboard = () => {
                   <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">{label}</label>
                   <select value={val} onChange={e=>set(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-secondary/40 border border-border/40 text-sm text-foreground focus:outline-none focus:border-primary/60 transition-all">
-                    <option value="">— Select species —</option>
-                    {SPECIES_DB.map(s=><option key={s.name} value={s.name}>{s.name} ({s.type})</option>)}
+                    <option value="" className="bg-background text-foreground">- Select species -</option>
+                    {SPECIES_DB.map(s=><option key={s.name} value={s.name} className="bg-background text-foreground">{s.name} ({s.type})</option>)}
                   </select>
                 </div>
               ))}
@@ -637,6 +705,7 @@ const Dashboard = () => {
           </motion.div>
         )}
       </main>
+      <FishChatbot />
     </div>
   );
 };

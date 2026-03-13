@@ -40,9 +40,9 @@ const HeroSection = () => {
       >
         {/* Main heading */}
         <motion.h1
-          className="font-display text-5xl sm:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 max-w-5xl mx-auto text-white [text-shadow:_0_2px_20px_rgb(0_0_0_/_50%),_0_4px_40px_rgb(0_0_0_/_30%)]"
+          className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] mb-8 max-w-5xl mx-auto text-white [text-shadow:_0_2px_20px_rgb(0_0_0_/_50%),_0_4px_40px_rgb(0_0_0_/_30%)]"
         >
-          {["Your", "fish", "deserve"].map((word, i) => (
+          {["The", "Smartest", "Way"].map((word, i) => (
             <motion.span
               key={word}
               initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
@@ -60,7 +60,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="inline-block text-primary [text-shadow:_0_0_30px_hsl(175_85%_45%_/_0.5)]"
           >
-            better
+            to Keep Fish
           </motion.span>
           <motion.span
             initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
@@ -68,7 +68,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.9 }}
             className="inline-block ml-[0.3em]"
           >
-            than guesswork
+            Alive
           </motion.span>
         </motion.h1>
 
@@ -76,11 +76,9 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.1 }}
-          className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-12 leading-relaxed [text-shadow:_0_1px_10px_rgb(0_0_0_/_60%),_0_2px_20px_rgb(0_0_0_/_30%)]"
+          className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed [text-shadow:_0_1px_10px_rgb(0_0_0_/_60%),_0_2px_20px_rgb(0_0_0_/_30%)]"
         >
-          AI-powered water chemistry, species compatibility, disease diagnosis,
-          and tank planning — all in one beautiful platform.
-          <span className="font-bold"> Stop losing fish.</span>
+          AquaOS tracks your water parameters, identifies diseases, checks fish compatibility, and tells you exactly what to do <span className="font-bold">before your tank crashes.</span>
         </motion.p>
 
         {/* CTA */}

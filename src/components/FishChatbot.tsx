@@ -31,7 +31,7 @@ interface Msg { role: "user" | "bot"; text: string; }
 
 const SUGGESTED = [
   "How do I cycle a new tank?",
-  "My ammonia is 0.5 ppm — help!",
+  "My ammonia is 0.5 ppm - help!",
   "Betta fish complete care guide",
   "How often should I do water changes?",
   "What coral should I start with?",
@@ -135,8 +135,8 @@ export const FishChatbot = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 left-6 z-50 flex flex-col items-center gap-2 group">
-        <div className="absolute -top-10 left-0 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2 group">
+        <div className="absolute -top-10 right-0 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
           Fish Assistant
         </div>
         <button
@@ -159,7 +159,7 @@ export const FishChatbot = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 340, damping: 28 }}
-            className="fixed bottom-24 left-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] rounded-2xl border border-border/50 bg-[hsl(var(--card))] shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] rounded-2xl border border-border/50 bg-[hsl(var(--card))] shadow-2xl flex flex-col overflow-hidden"
             style={{ height: "520px" }}
           >
             {/* Header */}

@@ -73,7 +73,7 @@ const PricingSection = () => {
               Annual
               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                 annual ? "bg-primary-foreground/20" : "bg-accent/10 text-accent"
-              }`}>−27%</span>
+              }`}>-27%</span>
             </button>
           </div>
         </motion.div>
